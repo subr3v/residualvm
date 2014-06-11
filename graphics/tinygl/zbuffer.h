@@ -43,7 +43,7 @@ struct ZBuffer {
 	ZBuffer(int xsize, int ysize, const Graphics::PixelBuffer &frame_buffer);
 	~ZBuffer();
 
-	Buffer* genOffscreenBuffer();
+	Buffer *genOffscreenBuffer();
 	void delOffscreenBuffer(Buffer *buffer);
 	void clear(int clear_z, int z, int clear_color, int r, int g, int b);
 
@@ -52,9 +52,9 @@ struct ZBuffer {
 	* Eack pixel is copied if and only if its depth value is bigger than the
 	* depth value of the screen pixel, so if it is 'above'.
 	*/
-	void blitOffscreenBuffer(Buffer* buffer);
-	void selectOffscreenBuffer(Buffer* buffer);
-	void clearOffscreenBuffer(Buffer* buffer);
+	void blitOffscreenBuffer(Buffer *buffer);
+	void selectOffscreenBuffer(Buffer *buffer);
+	void clearOffscreenBuffer(Buffer *buffer);
 	void setTexture(const Graphics::PixelBuffer &texture);
 
 	int xsize, ysize;
