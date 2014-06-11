@@ -176,4 +176,9 @@ void ZBuffer::clearOffscreenBuffer( Buffer* buf ) {
 	buf->used = false;
 }
 
+void ZBuffer::setTexture( const Graphics::PixelBuffer &texture )
+{
+	current_texture = texture;
+}
+
 } // end of namespace TinyGL

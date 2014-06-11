@@ -55,6 +55,7 @@ struct ZBuffer {
 	void blitOffscreenBuffer(Buffer* buffer);
 	void selectOffscreenBuffer(Buffer* buffer);
 	void clearOffscreenBuffer(Buffer* buffer);
+	void setTexture(const Graphics::PixelBuffer &texture);
 
 	int xsize, ysize;
 	int linesize; // line size, in bytes
@@ -113,7 +114,7 @@ void ZB_line_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2);
 
 // ztriangle.c */
 
-void ZB_setTexture(ZBuffer *zb, const Graphics::PixelBuffer &texture);
+//void ZB_setTexture(ZBuffer *zb, const Graphics::PixelBuffer &texture);
 void ZB_fillTriangleDepthOnly(ZBuffer *zb, ZBufferPoint *p1,
 							  ZBufferPoint *p2, ZBufferPoint *p3);
 void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p1,
