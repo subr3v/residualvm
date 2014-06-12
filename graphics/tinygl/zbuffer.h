@@ -86,26 +86,6 @@ struct ZBufferPoint {
 	float sz, tz;  // temporary coordinates for mapping
 };
 
-// zbuffer.c
-
-//Buffer *ZB_genOffscreenBuffer(ZBuffer *zb);
-//void ZB_delOffscreenBuffer(ZBuffer *zb, Buffer *buffer);
-/**
- * Blit the buffer to the screen buffer, checking the depth of the pixels.
- * Eack pixel is copied if and only if its depth value is bigger than the
- * depth value of the screen pixel, so if it is 'above'.
- */
-//void ZB_blitOffscreenBuffer(ZBuffer *zb, Buffer *buffer);
-//void ZB_selectOffscreenBuffer(ZBuffer *zb, Buffer *buffer);
-//void ZB_clearOffscreenBuffer(ZBuffer *zb, Buffer *buffer);
-
-//ZBuffer *ZB_open(int xsize, int ysize, const Graphics::PixelBuffer &buffer);
-//void ZB_close(ZBuffer *zb);
-//void ZB_resize(ZBuffer *zb, void *frame_buffer, int xsize, int ysize); // Not used anymore.
-//void ZB_clear(ZBuffer *zb, int clear_z, int z, int clear_color, int r, int g, int b);
-// linesize is in BYTES
-//void ZB_copyFrameBuffer(ZBuffer *zb, void *buf, int linesize); //NOTE: Unused
-
 // zline.c
 
 void ZB_plot(ZBuffer *zb, ZBufferPoint *p);
