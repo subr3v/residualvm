@@ -129,7 +129,7 @@ public:
 protected:
 
 private:
-	TinyGL::ZBuffer *_zb;
+	TinyGL::FrameBuffer *_zb;
 	Graphics::PixelBuffer _smushBitmap;
 	int _smushWidth;
 	int _smushHeight;
