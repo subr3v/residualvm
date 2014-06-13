@@ -66,7 +66,7 @@ void gl_draw_point(GLContext *c, GLVertex *p0) {
 		if (c->render_mode == TGL_SELECT) {
 			gl_add_select(c, p0->zp.z, p0->zp.z);
 		} else {
-			c->zb->plot(&p0->zp);
+			c->fb->plot(&p0->zp);
 		}
 	}
 }
@@ -123,9 +123,9 @@ void gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
 			gl_add_select1(c, p1->zp.z, p2->zp.z, p2->zp.z);
 		} else {
 			if (c->depth_test)
-				c->zb->line_z(&p1->zp, &p2->zp);
+				c->fb->line_z(&p1->zp, &p2->zp);
 			else
-				c->zb->line(&p1->zp, &p2->zp);
+				c->fb->line(&p1->zp, &p2->zp);
 		}
 	} else if ((cc1 & cc2) != 0) {
 		return;
@@ -153,9 +153,9 @@ void gl_draw_line(GLContext *c, GLVertex *p1, GLVertex *p2) {
 			gl_transform_to_viewport(c, &q2);
 
 			if (c->depth_test)
-				c->zb->line_z(&q1.zp, &q2.zp);
+				c->fb->line_z(&q1.zp, &q2.zp);
 			else
-				c->zb->line(&q1.zp, &q2.zp);
+				c->fb->line(&q1.zp, &q2.zp);
 		}
 	}
 }
@@ -373,12 +373,12 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 #ifdef TINYGL_PROFILE
 	{
 		int norm;
-		assert(p0->zp.x >= 0 && p0->zp.x < c->zb->xsize);
-		assert(p0->zp.y >= 0 && p0->zp.y < c->zb->ysize);
-		assert(p1->zp.x >= 0 && p1->zp.x < c->zb->xsize);
-		assert(p1->zp.y >= 0 && p1->zp.y < c->zb->ysize);
-		assert(p2->zp.x >= 0 && p2->zp.x < c->zb->xsize);
-		assert(p2->zp.y >= 0 && p2->zp.y < c->zb->ysize);
+		assert(p0->zp.x >= 0 && p0->zp.x < c->fb->xsize);
+		assert(p0->zp.y >= 0 && p0->zp.y < c->fb->ysize);
+		assert(p1->zp.x >= 0 && p1->zp.x < c->fb->xsize);
+		assert(p1->zp.y >= 0 && p1->zp.y < c->fb->ysize);
+		assert(p2->zp.x >= 0 && p2->zp.x < c->fb->xsize);
+		assert(p2->zp.y >= 0 && p2->zp.y < c->fb->ysize);
 
 		norm = (p1->zp.x - p0->zp.x) * (p2->zp.y - p0->zp.y) -
 				(p2->zp.x - p0->zp.x) * (p1->zp.y - p0->zp.y);
@@ -389,24 +389,24 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 
 	if (c->color_mask == 0) {
 		// FIXME: Accept more than just 0 or 1.
-		c->zb->fillTriangleDepthOnly(&p0->zp, &p1->zp, &p2->zp);
+		c->fb->fillTriangleDepthOnly(&p0->zp, &p1->zp, &p2->zp);
 	}
 	if (c->shadow_mode & 1) {
-		assert(c->zb->shadow_mask_buf);
-		c->zb->fillTriangleFlatShadowMask(&p0->zp, &p1->zp, &p2->zp);
+		assert(c->fb->shadow_mask_buf);
+		c->fb->fillTriangleFlatShadowMask(&p0->zp, &p1->zp, &p2->zp);
 	} else if (c->shadow_mode & 2) {
-		assert(c->zb->shadow_mask_buf);
-		c->zb->fillTriangleFlatShadow(&p0->zp, &p1->zp, &p2->zp);
+		assert(c->fb->shadow_mask_buf);
+		c->fb->fillTriangleFlatShadow(&p0->zp, &p1->zp, &p2->zp);
 	} else if (c->texture_2d_enabled) {
 #ifdef TINYGL_PROFILE
 		count_triangles_textured++;
 #endif
-		c->zb->setTexture(c->current_texture->images[0].pixmap);
-		c->zb->fillTriangleMappingPerspective(&p0->zp, &p1->zp, &p2->zp);
+		c->fb->setTexture(c->current_texture->images[0].pixmap);
+		c->fb->fillTriangleMappingPerspective(&p0->zp, &p1->zp, &p2->zp);
 	} else if (c->current_shade_model == TGL_SMOOTH) {
-		c->zb->fillTriangleSmooth(&p0->zp, &p1->zp, &p2->zp);
+		c->fb->fillTriangleSmooth(&p0->zp, &p1->zp, &p2->zp);
 	} else {
-		c->zb->fillTriangleFlat(&p0->zp, &p1->zp, &p2->zp);
+		c->fb->fillTriangleFlat(&p0->zp, &p1->zp, &p2->zp);
 	}
 }
 
@@ -415,29 +415,29 @@ void gl_draw_triangle_fill(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p
 void gl_draw_triangle_line(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	if (c->depth_test) {
 		if (p0->edge_flag)
-			c->zb->line_z(&p0->zp, &p1->zp);
+			c->fb->line_z(&p0->zp, &p1->zp);
 		if (p1->edge_flag)
-			c->zb->line_z(&p1->zp, &p2->zp);
+			c->fb->line_z(&p1->zp, &p2->zp);
 		if (p2->edge_flag)
-			c->zb->line_z(&p2->zp, &p0->zp);
+			c->fb->line_z(&p2->zp, &p0->zp);
 	} else {
 		if (p0->edge_flag)
-			c->zb->line(&p0->zp, &p1->zp);
+			c->fb->line(&p0->zp, &p1->zp);
 		if (p1->edge_flag)
-			c->zb->line(&p1->zp, &p2->zp);
+			c->fb->line(&p1->zp, &p2->zp);
 		if (p2->edge_flag)
-			c->zb->line(&p2->zp, &p0->zp);
+			c->fb->line(&p2->zp, &p0->zp);
 	}
 }
 
 // Render a clipped triangle in point mode
 void gl_draw_triangle_point(GLContext *c, GLVertex *p0, GLVertex *p1, GLVertex *p2) {
 	if (p0->edge_flag)
-		c->zb->plot(&p0->zp);
+		c->fb->plot(&p0->zp);
 	if (p1->edge_flag)
-		c->zb->plot(&p1->zp);
+		c->fb->plot(&p1->zp);
 	if (p2->edge_flag)
-		c->zb->plot(&p2->zp);
+		c->fb->plot(&p2->zp);
 }
 
 } // end of namespace TinyGL
