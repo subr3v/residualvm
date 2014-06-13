@@ -26,7 +26,7 @@ namespace TinyGL {
 // display modes
 #define ZB_MODE_5R6G5B  1  // true color 16 bits
 
-#define RGB_TO_PIXEL(r,g,b) zb->cmode.RGBToColor(r, g, b)
+#define RGB_TO_PIXEL(r,g,b) cmode.RGBToColor(r, g, b)
 typedef byte PIXEL;
 
 #define PSZSH 4
@@ -37,6 +37,14 @@ struct Buffer {
 	byte *pbuf;
 	unsigned int *zbuf;
 	bool used;
+};
+
+struct ZBufferPoint {
+	int x, y, z;   // integer coordinates in the zbuffer
+	int s, t;      // coordinates for the mapping
+	int r, g, b;   // color indexes
+
+	float sz, tz;  // temporary coordinates for mapping
 };
 
 struct ZBuffer {
@@ -56,6 +64,22 @@ struct ZBuffer {
 	void selectOffscreenBuffer(Buffer *buffer);
 	void clearOffscreenBuffer(Buffer *buffer);
 	void setTexture(const Graphics::PixelBuffer &texture);
+
+	void fillTriangleMappingPerspective(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleDepthOnly(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleFlat(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleFlatShadowMask(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleFlatShadow(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleSmooth(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+	void fillTriangleMapping(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	void plot(ZBufferPoint *p);
+	void line(ZBufferPoint *p1, ZBufferPoint *p2);
+	void line_z(ZBufferPoint *p1, ZBufferPoint *p2);
+	void line_flat_z(ZBufferPoint *p1, ZBufferPoint *p2, int color);
+	void line_interp_z(ZBufferPoint *p1, ZBufferPoint *p2);
+	void line_flat(ZBufferPoint *p1, ZBufferPoint *p2, int color);
+	void line_interp(ZBufferPoint *p1, ZBufferPoint *p2);
 
 	int xsize, ysize;
 	int linesize; // line size, in bytes
@@ -77,40 +101,6 @@ struct ZBuffer {
 	int *ctable;
 	Graphics::PixelBuffer current_texture;
 };
-
-struct ZBufferPoint {
-	int x, y, z;   // integer coordinates in the zbuffer
-	int s, t;      // coordinates for the mapping
-	int r, g, b;   // color indexes
-
-	float sz, tz;  // temporary coordinates for mapping
-};
-
-// zline.c
-
-void ZB_plot(ZBuffer *zb, ZBufferPoint *p);
-void ZB_line(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2);
-void ZB_line_z(ZBuffer *zb, ZBufferPoint *p1, ZBufferPoint *p2);
-
-// ztriangle.c */
-
-//void ZB_setTexture(ZBuffer *zb, const Graphics::PixelBuffer &texture);
-void ZB_fillTriangleDepthOnly(ZBuffer *zb, ZBufferPoint *p1,
-							  ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleFlat(ZBuffer *zb, ZBufferPoint *p1,
-						 ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleFlatShadowMask(ZBuffer *zb, ZBufferPoint *p1,
-								   ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleFlatShadow(ZBuffer *zb, ZBufferPoint *p1,
-							   ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleSmooth(ZBuffer *zb, ZBufferPoint *p1,
-						   ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleMapping(ZBuffer *zb, ZBufferPoint *p1,
-							ZBufferPoint *p2, ZBufferPoint *p3);
-void ZB_fillTriangleMappingPerspective(ZBuffer *zb, ZBufferPoint *p0,
-									   ZBufferPoint *p1, ZBufferPoint *p2);
-typedef void (*ZB_fillTriangleFunc)(ZBuffer *, ZBufferPoint *,
-									ZBufferPoint *, ZBufferPoint *);
 
 // memory.c
 void gl_free(void *p);
