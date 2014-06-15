@@ -61,6 +61,9 @@ void glopEnableDisable(GLContext *c, GLParam *p) {
 	case TGL_DEPTH_TEST:
 		c->depth_test = v;
 		break;
+	case TGL_BLEND:
+		c->enable_blend = v;
+		break;
 	case TGL_POLYGON_OFFSET_FILL:
 		if (v)
 			c->offset_states |= TGL_OFFSET_FILL;
@@ -97,6 +100,75 @@ void glopEnableDisable(GLContext *c, GLParam *p) {
 		} else {
 			//warning("glEnableDisable: 0x%X not supported.", code);
 		}
+		break;
+	}
+}
+
+void glopBlendFunc(GLContext *c, GLParam *p) {
+	
+	TGLenum sfactor = p[1].i;
+	TGLenum dfactor = p[2].i;
+
+	switch (sfactor) {
+	case TGL_ONE:
+
+		break;
+	case TGL_ZERO:
+
+		break;
+	case TGL_DST_COLOR:
+		
+		break;
+	case TGL_ONE_MINUS_DST_COLOR:
+
+		break;
+	case TGL_SRC_ALPHA:
+
+		break;
+	case TGL_ONE_MINUS_SRC_ALPHA:
+
+		break;
+	case TGL_DST_ALPHA:
+
+		break;
+	case TGL_ONE_MINUS_DST_ALPHA:
+
+		break;
+	case TGL_SRC_ALPHA_SATURATE:
+
+		break;
+	default:
+		error("glBlendFunc: sfactor not supported");
+		break;
+	}
+
+	switch (dfactor) {
+	case TGL_ONE:
+
+		break;
+	case TGL_ZERO:
+
+		break;
+	case TGL_SRC_COLOR:
+
+		break;
+	case TGL_ONE_MINUS_SRC_COLOR:
+
+		break;
+	case TGL_SRC_ALPHA:
+
+		break;
+	case TGL_ONE_MINUS_SRC_ALPHA:
+
+		break;
+	case TGL_DST_ALPHA:
+
+		break;
+	case TGL_ONE_MINUS_DST_ALPHA:
+
+		break;
+	default:
+		error("glBlendFunc: dfactor not supported");
 		break;
 	}
 }
