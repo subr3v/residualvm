@@ -12,7 +12,7 @@
 namespace TinyGL {
 
 uint8 PSZB;
-
+/*
 static void ZB_copyBuffer(FrameBuffer *zb, void *buf, int linesize) {
 	unsigned char *p1;
 	byte *q;
@@ -31,6 +31,7 @@ static void ZB_copyBuffer(FrameBuffer *zb, void *buf, int linesize) {
 void ZB_copyFrameBuffer(FrameBuffer *zb, void *buf, int linesize) {
 	ZB_copyBuffer(zb, buf, linesize);
 }
+*/
 
 // adr must be aligned on an 'int'
 void memset_s(void *adr, int val, int count) {
