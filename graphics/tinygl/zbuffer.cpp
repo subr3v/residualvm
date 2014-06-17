@@ -105,6 +105,7 @@ FrameBuffer::FrameBuffer(int xsize, int ysize, const Graphics::PixelBuffer &fram
 
 	this->buffer.pbuf = this->pbuf.getRawBuffer();
 	this->buffer.zbuf = this->zbuf;
+	_blendingEnabled = false;
 }
 
 FrameBuffer::~FrameBuffer() {
@@ -179,6 +180,17 @@ void FrameBuffer::clearOffscreenBuffer( Buffer* buf ) {
 
 void FrameBuffer::setTexture( const Graphics::PixelBuffer &texture ) {
 	current_texture = texture;
+}
+
+void FrameBuffer::setBlendingFactors( int sfactor, int dfactor )
+{
+	_sourceBlendingFactor = sfactor;
+	_destinationBlendingFactor = dfactor;
+}
+
+void FrameBuffer::enableBlending( bool enableBlending )
+{
+	_blendingEnabled = enableBlending;
 }
 
 } // end of namespace TinyGL
