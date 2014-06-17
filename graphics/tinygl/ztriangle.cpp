@@ -400,7 +400,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 							putPixelFlat(pp,pz,2,z,color,dzdx);
 							putPixelFlat(pp,pz,3,z,color,dzdx);
 						}
-						if (DRAW_MAPPING) {
+						if (drawLogic == DRAW_MAPPING) {
 							putPixelMapping(pp,pz,texture,0,z,t,s,dzdx,dsdx,dtdx);
 							putPixelMapping(pp,pz,texture,1,z,t,s,dzdx,dsdx,dtdx);
 							putPixelMapping(pp,pz,texture,2,z,t,s,dzdx,dsdx,dtdx);
@@ -419,7 +419,7 @@ void FrameBuffer::fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint 
 						if (drawLogic == DRAW_FLAT) {
 							putPixelFlat(pp,pz,0,z,color,dzdx);
 						}
-						if (DRAW_MAPPING) {
+						if (drawLogic == DRAW_MAPPING) {
 							putPixelMapping(pp,pz,texture,0,z,t,s,dzdx,dsdx,dtdx);
 						}
 						if (interpZ) {
