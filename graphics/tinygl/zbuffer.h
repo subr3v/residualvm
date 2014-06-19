@@ -23,11 +23,13 @@ namespace TinyGL {
 #define ZB_POINT_GREEN_MAX ( (1 << 16) - (1 << 9) )
 #define ZB_POINT_BLUE_MIN ( (1 << 10) )
 #define ZB_POINT_BLUE_MAX ( (1 << 16) - (1 << 10) )
+#define ZB_POINT_ALPHA_MIN ( (1 << 10) )
+#define ZB_POINT_ALPHA_MAX ( (1 << 16) - (1 << 10) )
 
 // display modes
 #define ZB_MODE_5R6G5B  1  // true color 16 bits
 
-#define RGB_TO_PIXEL(r,g,b) cmode.RGBToColor(r, g, b)
+#define RGB_TO_PIXEL(r,g,b) cmode.ARGBToColor(255,r, g, b) // Default to 255 alpha aka solid colour.
 typedef byte PIXEL;
 
 #define PSZSH 4
@@ -43,7 +45,7 @@ struct Buffer {
 struct ZBufferPoint {
 	int x, y, z;   // integer coordinates in the zbuffer
 	int s, t;      // coordinates for the mapping
-	int r, g, b;   // color indexes
+	int r, g, b, a;   // color indexes
 
 	float sz, tz;  // temporary coordinates for mapping
 };
@@ -56,6 +58,14 @@ struct FrameBuffer {
 	void delOffscreenBuffer(Buffer *buffer);
 	void clear(int clear_z, int z, int clear_color, int r, int g, int b);
 
+	byte *getPixelBuffer() {
+		return pbuf.getRawBuffer(0);
+	}
+
+	FORCEINLINE void readPixelRGB(int pixel, byte &r, byte &g, byte &b) {
+		pbuf.getRGBAt(pixel,r,g,b);
+	}
+
 	FORCEINLINE void writePixel(int pixel, int value) {
 		if (_blendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel,value);
@@ -66,6 +76,45 @@ struct FrameBuffer {
 			this->pbuf.getFormat().colorToARGB(value, aDst, rDst, gDst, bDst);
 			switch (_sourceBlendingFactor) {
 			case TGL_ZERO:
+				rDst = gDst = bDst = 0;
+				break;
+			case TGL_ONE:
+				break;
+			case TGL_DST_COLOR:
+				this->pbuf.getRGBAt(pixel, rSrc, gSrc, bSrc);
+				rDst = (rSrc * rDst) >> 8;
+				gDst = (gSrc * gDst) >> 8;
+				bDst = (bSrc * bDst) >> 8;
+				break;
+			case TGL_ONE_MINUS_DST_COLOR:
+				this->pbuf.getRGBAt(pixel, rSrc, gSrc, bSrc);
+				rDst = (rDst * (255 - rSrc)) >> 8;
+				gDst = (gDst * (255 - gSrc)) >> 8;
+				bDst = (bDst * (255 - bSrc)) >> 8;
+				break;
+			case TGL_SRC_ALPHA:
+				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
+				rDst = (rDst * aDst) >> 8;
+				gDst = (gDst * aDst) >> 8;
+				bDst = (bDst * aDst) >> 8;
+				break;
+			case TGL_ONE_MINUS_SRC_ALPHA:
+				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
+				rDst = (rDst * (255 - aDst)) >> 8;
+				gDst = (gDst * (255 - aDst)) >> 8;
+				bDst = (bDst * (255 - aDst)) >> 8;
+				break;
+			case TGL_DST_ALPHA:
+				break;
+			case TGL_ONE_MINUS_DST_ALPHA:
+				rDst = gDst = bDst = 0;
+				break;
+			default:
+				break;
+			}
+
+			switch (_destinationBlendingFactor) {
+			case TGL_ZERO:
 				rSrc = gSrc = bSrc = 0;
 				break;
 			case TGL_ONE:
@@ -85,71 +134,23 @@ struct FrameBuffer {
 				break;
 			case TGL_SRC_ALPHA:
 				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
-				rSrc = (rSrc * aSrc) >> 8;
-				gSrc = (gSrc * aSrc) >> 8;
-				bSrc = (bSrc * aSrc) >> 8;
-				break;
-			case TGL_ONE_MINUS_SRC_ALPHA:
-				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
-				rSrc = (rSrc * (255 - aSrc)) >> 8;
-				gSrc = (gSrc * (255 - aSrc)) >> 8;
-				bSrc = (bSrc * (255 - aSrc)) >> 8;
-				break;
-			case TGL_DST_ALPHA:
-				this->pbuf.getRGBAt(pixel, rSrc, gSrc, bSrc);
 				rSrc = (rSrc * aDst) >> 8;
 				gSrc = (gSrc * aDst) >> 8;
 				bSrc = (bSrc * aDst) >> 8;
 				break;
-			case TGL_ONE_MINUS_DST_ALPHA:
+			case TGL_ONE_MINUS_SRC_ALPHA:
+				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
 				rSrc = (rSrc * (255 - aDst)) >> 8;
 				gSrc = (gSrc * (255 - aDst)) >> 8;
 				bSrc = (bSrc * (255 - aDst)) >> 8;
 				break;
-			case TGL_SRC_ALPHA_SATURATE: // Still not sure
-				break;
-			default:
-				break;
-			}
-			switch (_destinationBlendingFactor) {
-			case TGL_ZERO:
-				rDst = gDst = bDst = 0;
-				break;
-			case TGL_ONE:
-				break;
-			case TGL_SRC_COLOR:
-				this->pbuf.getRGBAt(pixel, rSrc, gSrc, bSrc);
-				rDst = (rSrc * rDst) >> 8;
-				gDst = (gSrc * gDst) >> 8;
-				bDst = (bSrc * bDst) >> 8;
-				break;
-			case TGL_ONE_MINUS_SRC_COLOR:
-				this->pbuf.getRGBAt(pixel, rSrc, gSrc, bSrc);
-				rDst = (rDst * (255 - rSrc)) >> 8;
-				gDst = (gDst * (255 - gSrc)) >> 8;
-				bDst = (bDst * (255 - bSrc)) >> 8;
-				break;
-			case TGL_SRC_ALPHA:
-				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
-				rDst = (rDst * aSrc) >> 8;
-				gDst = (gDst * aSrc) >> 8;
-				bDst = (bDst * aSrc) >> 8;
-				break;
-			case TGL_ONE_MINUS_SRC_ALPHA:
-				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
-				rDst = (rDst * (255 - aSrc)) >> 8;
-				gDst = (gDst * (255 - aSrc)) >> 8;
-				bDst = (bDst * (255 - aSrc)) >> 8;
-				break;
 			case TGL_DST_ALPHA:
-				rDst = (rDst * aDst) >> 8;
-				gDst = (gDst * aDst) >> 8;
-				bDst = (bDst * aDst) >> 8;
+				this->pbuf.getRGBAt(pixel, rSrc, gSrc, bSrc);
 				break;
 			case TGL_ONE_MINUS_DST_ALPHA:
-				rDst = (rDst * (255 - aDst)) >> 8;
-				gDst = (gDst * (255 - aDst)) >> 8;
-				bDst = (bDst * (255 - aDst)) >> 8;
+				rSrc = gSrc = bSrc = 0;
+				break;
+			case TGL_SRC_ALPHA_SATURATE: // Still not sure
 				break;
 			default:
 				break;
@@ -159,11 +160,54 @@ struct FrameBuffer {
 	}
 
 	FORCEINLINE void writePixel(int pixel, byte rDst, byte gDst, byte bDst) {
+		writePixel(pixel,255,rDst,gDst,bDst);
+	}
+
+	FORCEINLINE void writePixel(int pixel, byte aDst, byte rDst, byte gDst, byte bDst) {
 		if (_blendingEnabled == false) {
-			this->pbuf.setPixelAt(pixel,255,rDst,gDst,bDst);
+			this->pbuf.setPixelAt(pixel,aDst,rDst,gDst,bDst);
 		} else {
 			byte rSrc, gSrc, bSrc, aSrc;
 			switch (_sourceBlendingFactor) {
+			case TGL_ZERO:
+				rDst = gDst = bDst = 0;
+				break;
+			case TGL_ONE:
+				break;
+			case TGL_DST_COLOR:
+				this->pbuf.getRGBAt(pixel, rSrc, gSrc, bSrc);
+				rDst = (rSrc * rDst) >> 8;
+				gDst = (gSrc * gDst) >> 8;
+				bDst = (bSrc * bDst) >> 8;
+				break;
+			case TGL_ONE_MINUS_DST_COLOR:
+				this->pbuf.getRGBAt(pixel, rSrc, gSrc, bSrc);
+				rDst = (rDst * (255 - rSrc)) >> 8;
+				gDst = (gDst * (255 - gSrc)) >> 8;
+				bDst = (bDst * (255 - bSrc)) >> 8;
+				break;
+			case TGL_SRC_ALPHA:
+				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
+				rDst = (rDst * aDst) >> 8;
+				gDst = (gDst * aDst) >> 8;
+				bDst = (bDst * aDst) >> 8;
+				break;
+			case TGL_ONE_MINUS_SRC_ALPHA:
+				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
+				rDst = (rDst * (255 - aDst)) >> 8;
+				gDst = (gDst * (255 - aDst)) >> 8;
+				bDst = (bDst * (255 - aDst)) >> 8;
+				break;
+			case TGL_DST_ALPHA:
+				break;
+			case TGL_ONE_MINUS_DST_ALPHA:
+				rDst = gDst = bDst = 0;
+				break;
+			default:
+				break;
+			}
+
+			switch (_destinationBlendingFactor) {
 			case TGL_ZERO:
 				rSrc = gSrc = bSrc = 0;
 				break;
@@ -184,15 +228,15 @@ struct FrameBuffer {
 				break;
 			case TGL_SRC_ALPHA:
 				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
-				rSrc = (rSrc * aSrc) >> 8;
-				gSrc = (gSrc * aSrc) >> 8;
-				bSrc = (bSrc * aSrc) >> 8;
+				rSrc = (rSrc * aDst) >> 8;
+				gSrc = (gSrc * aDst) >> 8;
+				bSrc = (bSrc * aDst) >> 8;
 				break;
 			case TGL_ONE_MINUS_SRC_ALPHA:
 				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
-				rSrc = (rSrc * (255 - aSrc)) >> 8;
-				gSrc = (gSrc * (255 - aSrc)) >> 8;
-				bSrc = (bSrc * (255 - aSrc)) >> 8;
+				rSrc = (rSrc * (255 - aDst)) >> 8;
+				gSrc = (gSrc * (255 - aDst)) >> 8;
+				bSrc = (bSrc * (255 - aDst)) >> 8;
 				break;
 			case TGL_DST_ALPHA:
 				this->pbuf.getRGBAt(pixel, rSrc, gSrc, bSrc);
@@ -205,46 +249,16 @@ struct FrameBuffer {
 			default:
 				break;
 			}
-			switch (_destinationBlendingFactor) {
-			case TGL_ZERO:
-				rDst = gDst = bDst = 0;
-				break;
-			case TGL_ONE:
-				break;
-			case TGL_SRC_COLOR:
-				this->pbuf.getRGBAt(pixel, rSrc, gSrc, bSrc);
-				rDst = (rSrc * rDst) >> 8;
-				gDst = (gSrc * gDst) >> 8;
-				bDst = (bSrc * bDst) >> 8;
-				break;
-			case TGL_ONE_MINUS_SRC_COLOR:
-				this->pbuf.getRGBAt(pixel, rSrc, gSrc, bSrc);
-				rDst = (rDst * (255 - rSrc)) >> 8;
-				gDst = (gDst * (255 - gSrc)) >> 8;
-				bDst = (bDst * (255 - bSrc)) >> 8;
-				break;
-			case TGL_SRC_ALPHA:
-				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
-				rDst = (rDst * aSrc) >> 8;
-				gDst = (gDst * aSrc) >> 8;
-				bDst = (bDst * aSrc) >> 8;
-				break;
-			case TGL_ONE_MINUS_SRC_ALPHA:
-				this->pbuf.getARGBAt(pixel, aSrc, rSrc, gSrc, bSrc);
-				rDst = (rDst * (255 - aSrc)) >> 8;
-				gDst = (gDst * (255 - aSrc)) >> 8;
-				bDst = (bDst * (255 - aSrc)) >> 8;
-				break;
-			case TGL_DST_ALPHA:
-				break;
-			case TGL_ONE_MINUS_DST_ALPHA:
-				rDst = gDst = bDst = 0;
-				break;
-			default:
-				break;
-			}
 			this->pbuf.setPixelAt(pixel,255,rSrc + rDst,gSrc + gDst,bSrc + bDst);
 		}
+	}
+
+	void copyToBuffer(Graphics::PixelBuffer &buffer) {
+		buffer.copyBuffer(0, xsize * ysize, pbuf);
+	}
+
+	void copyFromBuffer(Graphics::PixelBuffer &buffer) {
+		pbuf.copyBuffer(0, xsize * ysize, buffer);
 	}
 
 	void enableBlending(bool enableBlending);
@@ -300,8 +314,8 @@ struct FrameBuffer {
 	unsigned char *dctable;
 	int *ctable;
 	Graphics::PixelBuffer current_texture;
-	Graphics::PixelBuffer pbuf;
 private:
+	Graphics::PixelBuffer pbuf;
 	bool _blendingEnabled;
 	int _sourceBlendingFactor;
 	int _destinationBlendingFactor;

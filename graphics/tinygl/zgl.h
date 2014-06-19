@@ -227,7 +227,7 @@ struct GLContext {
 
 	// current vertex state
 	V4 current_color;
-	unsigned int longcurrent_color[3]; // precomputed integer color
+	unsigned int longcurrent_color[4]; // precomputed integer color
 	V4 current_normal;
 	V4 current_tex_coord;
 	int current_edge_flag;
