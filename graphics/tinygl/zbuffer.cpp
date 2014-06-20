@@ -114,7 +114,7 @@ FrameBuffer::~FrameBuffer() {
 	gl_free(zbuf);
 }
 
-Buffer* FrameBuffer::genOffscreenBuffer() {
+Buffer *FrameBuffer::genOffscreenBuffer() {
 	Buffer *buf = (Buffer *)gl_malloc(sizeof(Buffer));
 	buf->pbuf = (byte *)gl_malloc(this->ysize * this->linesize);
 	int size = this->xsize * this->ysize * sizeof(unsigned int);
@@ -146,7 +146,7 @@ void FrameBuffer::clear(int clear_z, int z, int clear_color, int r, int g, int b
 	}
 }
 
-void FrameBuffer::blitOffscreenBuffer(Buffer* buf) {
+void FrameBuffer::blitOffscreenBuffer(Buffer *buf) {
 	// TODO: could be faster, probably.
 	if (buf->used) {
 		for (int i = 0; i < this->xsize * this->ysize; ++i) {
@@ -161,7 +161,7 @@ void FrameBuffer::blitOffscreenBuffer(Buffer* buf) {
 	}
 }
 
-void FrameBuffer::selectOffscreenBuffer(Buffer* buf) {
+void FrameBuffer::selectOffscreenBuffer(Buffer *buf) {
 	if (buf) {
 		this->pbuf = buf->pbuf;
 		this->zbuf = buf->zbuf;
@@ -172,17 +172,17 @@ void FrameBuffer::selectOffscreenBuffer(Buffer* buf) {
 	}
 }
 
-void FrameBuffer::clearOffscreenBuffer(Buffer* buf) {
+void FrameBuffer::clearOffscreenBuffer(Buffer *buf) {
 	memset(buf->pbuf, 0, this->ysize * this->linesize);
 	memset(buf->zbuf, 0, this->ysize * this->xsize * sizeof(unsigned int));
 	buf->used = false;
 }
 
-void FrameBuffer::setTexture( const Graphics::PixelBuffer &texture ) {
+void FrameBuffer::setTexture(const Graphics::PixelBuffer &texture) {
 	current_texture = texture;
 }
 
-void FrameBuffer::setBlendingFactors( int sfactor, int dfactor ) {
+void FrameBuffer::setBlendingFactors(int sfactor, int dfactor) {
 	_sourceBlendingFactor = sfactor;
 	_destinationBlendingFactor = dfactor;
 }

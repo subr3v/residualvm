@@ -29,7 +29,7 @@ namespace TinyGL {
 // display modes
 #define ZB_MODE_5R6G5B  1  // true color 16 bits
 
-#define RGB_TO_PIXEL(r,g,b) cmode.ARGBToColor(255,r, g, b) // Default to 255 alpha aka solid colour.
+#define RGB_TO_PIXEL(r,g,b) cmode.ARGBToColor(255, r, g, b) // Default to 255 alpha aka solid colour.
 typedef byte PIXEL;
 
 #define PSZSH 4
@@ -69,8 +69,7 @@ struct FrameBuffer {
 	FORCEINLINE void writePixel(int pixel, int value) {
 		if (_blendingEnabled == false) {
 			this->pbuf.setPixelAt(pixel,value);
-		}
-		else {
+		} else {
 			byte rSrc, gSrc, bSrc, aSrc;
 			byte rDst, gDst, bDst, aDst;
 			this->pbuf.getFormat().colorToARGB(value, aDst, rDst, gDst, bDst);
@@ -160,7 +159,7 @@ struct FrameBuffer {
 	}
 
 	FORCEINLINE void writePixel(int pixel, byte rDst, byte gDst, byte bDst) {
-		writePixel(pixel,255,rDst,gDst,bDst);
+		writePixel(pixel, 255, rDst, gDst, bDst);
 	}
 
 	FORCEINLINE void writePixel(int pixel, byte aDst, byte rDst, byte gDst, byte bDst) {
@@ -249,7 +248,7 @@ struct FrameBuffer {
 			default:
 				break;
 			}
-			this->pbuf.setPixelAt(pixel,255,rSrc + rDst,gSrc + gDst,bSrc + bDst);
+			this->pbuf.setPixelAt(pixel, 255, rSrc + rDst, gSrc + gDst, bSrc + bDst);
 		}
 	}
 

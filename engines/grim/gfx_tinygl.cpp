@@ -603,14 +603,12 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 	}
 
 	// FIXME: TinyGL doesn't seem to support translucency.
-	const float alpha = actor->getEffectiveAlpha() * 0.5f; 
+	const float alpha = actor->getEffectiveAlpha(); 
 	if (alpha < 1.f) {
 		_alpha = alpha;
 	    tglEnable(TGL_BLEND);
 	    tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 	}
-	//tglEnable(TGL_BLEND);
-	//tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 
 	const Math::Quaternion &quat = actor->getRotationQuat();
 	const float &scale = actor->getScale();
