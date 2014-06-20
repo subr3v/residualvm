@@ -63,12 +63,12 @@ struct FrameBuffer {
 	}
 
 	FORCEINLINE void readPixelRGB(int pixel, byte &r, byte &g, byte &b) {
-		pbuf.getRGBAt(pixel,r,g,b);
+		pbuf.getRGBAt(pixel, r, g, b);
 	}
 
 	FORCEINLINE void writePixel(int pixel, int value) {
 		if (_blendingEnabled == false) {
-			this->pbuf.setPixelAt(pixel,value);
+			this->pbuf.setPixelAt(pixel, value);
 		} else {
 			byte rSrc, gSrc, bSrc, aSrc;
 			byte rDst, gDst, bDst, aDst;
@@ -164,7 +164,7 @@ struct FrameBuffer {
 
 	FORCEINLINE void writePixel(int pixel, byte aDst, byte rDst, byte gDst, byte bDst) {
 		if (_blendingEnabled == false) {
-			this->pbuf.setPixelAt(pixel,aDst,rDst,gDst,bDst);
+			this->pbuf.setPixelAt(pixel, aDst, rDst, gDst, bDst);
 		} else {
 			byte rSrc, gSrc, bSrc, aSrc;
 			switch (_sourceBlendingFactor) {
