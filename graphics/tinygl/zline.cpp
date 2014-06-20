@@ -75,7 +75,7 @@ FORCEINLINE static void drawLine(FrameBuffer *buffer, ZBufferPoint *p1, ZBufferP
 
 template <bool interpRGB, bool interpZ> 
 void FrameBuffer::fillLine(ZBufferPoint *p1, ZBufferPoint *p2, int color) {
-	int dx, dy, sx, pp;
+	int dx, dy, sx;
 	unsigned int r, g, b;
 	unsigned int *pz = NULL;
 	unsigned int z;
