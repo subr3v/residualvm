@@ -148,7 +148,13 @@ Common::Error Myst3Engine::run() {
 		return Common::kUserCanceled;
 	}
 
-	_gfx = Renderer::createRenderer(_system);
+	bool softRenderer = ConfMan.getBool("soft_renderer");
+
+	if (softRenderer) {
+		_gfx = CreateGfxTinyGL(_system);
+	} else {
+		_gfx = CreateGfxOpenGL(_system);
+	}
 	_sound = new Sound(this);
 	_ambient = new Ambient(this);
 	_rnd = new Common::RandomSource("sprint");
@@ -160,7 +166,7 @@ Common::Error Myst3Engine::run() {
 	_menu = new Menu(this);
 	_archiveNode = new Archive();
 
-	Graphics::PixelBuffer screenBuffer = _system->setupScreen(w, h, false, false);
+	Graphics::PixelBuffer screenBuffer = _system->setupScreen(w, h, false, softRenderer == false);
 	_system->showMouse(false);
 
 	openArchives();
