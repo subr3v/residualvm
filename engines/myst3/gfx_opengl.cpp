@@ -46,6 +46,10 @@ Renderer *Renderer::createRenderer(OSystem *system) {
 	return new OpenGLRenderer(system);
 }
 
+Renderer *CreateGfxOpenGL(OSystem *system) {
+	return new OpenGLRenderer(system);
+}
+
 OpenGLRenderer::OpenGLRenderer(OSystem *system) :
 	BaseRenderer(system),
 	_nonPowerOfTwoTexSupport(false) {
