@@ -20,21 +20,22 @@
  *
  */
 
-#ifndef GFX_OPENGL_H_
-#define GFX_OPENGL_H_
+#ifndef GFX_TINYGL_H_
+#define GFX_TINYGL_H_
 
 #include "common/rect.h"
 #include "common/system.h"
 #include "math/vector3d.h"
 
 #include "engines/myst3/gfx.h"
+#include "graphics/tinygl/zgl.h"
 
 namespace Myst3 {
 
-class OpenGLRenderer : public BaseRenderer {
+class TinyGLRenderer : public BaseRenderer {
 public:
-	OpenGLRenderer(OSystem *_system);
-	virtual ~OpenGLRenderer();
+	TinyGLRenderer(OSystem *_system);
+	virtual ~TinyGLRenderer();
 
 	virtual void init(Graphics::PixelBuffer &screenBuffer);
 
@@ -59,6 +60,7 @@ public:
 	virtual void screenPosToDirection(const Common::Point screen, float &pitch, float &heading);
 
 private:
+	TinyGL::FrameBuffer *_fb;
 	int _cubeViewport[4];
 	double _cubeProjectionMatrix[16];
 	double _cubeModelViewMatrix[16];
