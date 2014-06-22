@@ -103,7 +103,7 @@ void TinyGLRenderer::setupCameraPerspective(float pitch, float heading, float fo
 		glFOV = 36.0; // Somewhat good value for fov == 60
 
 	// NOTE: tinyGL viewport implementation needs to be checked as it doesn't behave the same as openGL
-	tglViewport(0, 30, kOriginalWidth, kFrameHeight);
+	tglViewport(0, kTopBorderHeight, kOriginalWidth, kFrameHeight);
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 	tgluPerspective(glFOV, (TGLfloat)kOriginalWidth / (TGLfloat)kFrameHeight, 1.0, 10000.0);
