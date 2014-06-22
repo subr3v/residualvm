@@ -29,8 +29,6 @@
 #include "common/rect.h"
 #include "common/textconsole.h"
 
-#if !defined(USE_GLES2) && !defined(USE_OPENGL_SHADERS)
-
 #include "graphics/colormasks.h"
 #include "graphics/surface.h"
 
@@ -393,5 +391,3 @@ void TinyGLRenderer::blitScreen(Texture *texture, int dstX, int dstY, int srcX, 
 }
 
 } // end of namespace Myst3
-
-#endif
