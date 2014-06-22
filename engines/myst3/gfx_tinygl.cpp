@@ -38,8 +38,6 @@
 #include "engines/myst3/gfx_tinygl.h"
 #include "engines/myst3/gfx_tinygl_texture.h"
 
-#include <gl/GLU.h>
-
 namespace Myst3 {
 
 Renderer *CreateGfxTinyGL(OSystem *system) {
@@ -325,7 +323,7 @@ void TinyGLRenderer::screenPosToDirection(const Common::Point screen, float &pit
 	double x, y, z;
 
 	// Screen coords to 3D coords
-	gluUnProject(screen.x, kOriginalHeight - screen.y, 0.9, _cubeModelViewMatrix, _cubeProjectionMatrix, (TGLint *)_cubeViewport, &x, &y, &z);
+	tgluUnProject(screen.x, kOriginalHeight - screen.y, 0.9, _cubeModelViewMatrix, _cubeProjectionMatrix, (TGLint *)_cubeViewport, &x, &y, &z);
 
 	// 3D coords to polar coords
 	Math::Vector3d v = Math::Vector3d(x, y, z);
