@@ -602,8 +602,7 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		tglShadowProjection(_currentShadowArray->pos, shadowSector->getVertices()[0], shadowSector->getNormal(), _currentShadowArray->dontNegate);
 	}
 
-	// FIXME: TinyGL doesn't seem to support translucency.
-	const float alpha = actor->getEffectiveAlpha(); 
+	const float alpha = actor->getEffectiveAlpha();
 	if (alpha < 1.f) {
 		_alpha = alpha;
 	    tglEnable(TGL_BLEND);
@@ -660,7 +659,6 @@ void GfxTinyGL::finishActorDraw() {
 	tglMatrixMode(TGL_MODELVIEW);
 	tglDisable(TGL_TEXTURE_2D);
 
-	// FIXME: TinyGL doesn't seem to support translucency.
 	if (_alpha < 1.f) {
 	    tglDisable(TGL_BLEND);
 		_alpha = 1.f;
