@@ -23,3 +23,4 @@ The changes made from the original version of TinyGL 0.4 are:
 * Reformatted the source to use the same code-formatting conventions as the rest of ResidualVM (indentation-wise, not variable-naming wise)
 * Heavily refactored the triangle and line drawing routines
 * Renamed ZBuffer into FrameBuffer and moved all the external C functions as member functions.
+* Added implementation of glBlendFunc.
