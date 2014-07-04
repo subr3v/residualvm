@@ -5,8 +5,8 @@
 
 namespace TinyGL {
 
-
-	void tglUploadBlitTexture(int* textureHandle, int width, int height, Graphics::PixelBuffer &buffer, int colorKey);
+	int tglCreateBlitTexture();
+	void tglUploadBlitTexture(int textureHandle, int width, int height, Graphics::PixelBuffer &buffer, int colorKey);
 	void tglDisposeBlitTexture(int textureHandle);
 
 	void tglBlit(int blitTextureHandle, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float rotation = 0, float rTint = 1.0f, float gTint = 1.0f, float bTint = 1.0f, float aTint = 1.0f);
