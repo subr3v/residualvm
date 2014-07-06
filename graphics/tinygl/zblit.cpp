@@ -9,16 +9,25 @@ namespace TinyGL {
 		void loadData(int width, int height, Graphics::PixelBuffer &buffer, int colorKey) {
 			this->width = width;
 			this->height = height;
-			this->dataBuffer = Graphics::PixelBuffer(buffer.getFormat(), width * height, DisposeAfterUse::YES);
-			this->dataBuffer.copyBuffer(0, 0, width * height, buffer);
-			// Apply color key transformation
+			this->dataBuffer = Graphics::PixelBuffer(Graphics::PixelFormat(4, 8, 8, 8 , 8, 8, 16, 24, 0), width * height, DisposeAfterUse::YES);
+			for (int x = 0;  x < width; x++) {
+				for (int y = 0; y < height; y++) {
+					int pixel = buffer.getValueAt(y * width + x);
+					if (pixel == colorKey) {
+						dataBuffer.setPixelAt(y * width + x, 0, 255, 255, 255); // Color keyed pixels become transparent white.
+					} else {
+						dataBuffer.setPixelAt(y * width + x, pixel);
+					}
+				}
+			}
+			// Create opaque lines data.
 		}
 
 		Graphics::PixelBuffer dataBuffer;
 		int width, height;
 	};
 
-	int tglCreateBlitTexture() {
+	int tglGenBlitTexture() {
 		TinyGL::GLContext *c = TinyGL::gl_get_context();
 		int handle = -1;
 		for(int i = 0; i < BLIT_TEXTURE_MAX_COUNT; i++) {
@@ -37,7 +46,7 @@ namespace TinyGL {
 		texture->loadData(width, height, buffer, colorKey);
 	}
 
-	void tglDisposeBlitTexture(int textureHandle) {
+	void tglDeleteBlitTexture(int textureHandle) {
 		TinyGL::GLContext *c = TinyGL::gl_get_context();
 		TinyGLBlitTexture *texture = (TinyGLBlitTexture *)c->blitTextures[textureHandle];
 		c->blitTextures[textureHandle] = NULL;
@@ -45,7 +54,8 @@ namespace TinyGL {
 	}
 
 	template <bool disableBlending, bool disableColoring, bool disableTransform>
-	void tglBlitGeneric(int blitTextureHandle, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float rotation, float rTint, float gTint, float bTint, float aTint) {
+	void tglBlitGeneric(int blitTextureHandle, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float rotation,
+						float originX, float originY, float rTint, float gTint, float bTint, float aTint) {
 		TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 		if (dstX >= c->fb->xsize|| dstY >= c->fb->ysize)
@@ -78,29 +88,30 @@ namespace TinyGL {
 		}
 	}
 
-	void tglBlit(int blitTextureHandle, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float rotation, float rTint, float gTint, float bTint, float aTint) {
-
+	void tglBlit(int blitTextureHandle, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float rotation,
+				 float originX, float originY, float rTint, float gTint, float bTint, float aTint) {
 		TinyGL::GLContext *c =TinyGL::gl_get_context();
 		bool disableColor = aTint == 1.0f && bTint == 1.0f && gTint == 1.0f && rTint == 1.0f;
 		bool disableTransform = srcWidth == width && srcHeight == height && rotation == 0;
 		bool disableBlend = c->enableBlend == false;
 		if (disableColor && disableTransform && disableBlend) {
-			tglBlitGeneric<true, true, true>(blitTextureHandle, dstX, dstY, width, height, srcX, srcY, srcWidth, srcHeight, rotation, rTint, gTint, bTint, aTint);
+			tglBlitGeneric<true, true, true>(blitTextureHandle, dstX, dstY, width, height, srcX, srcY, srcWidth, srcHeight, rotation, originX, originY, rTint, gTint, bTint, aTint);
 		} else if (disableColor && disableTransform) {
-			tglBlitGeneric<false, true, true>(blitTextureHandle, dstX, dstY, width, height, srcX, srcY, srcWidth, srcHeight, rotation, rTint, gTint, bTint, aTint);
+			tglBlitGeneric<false, true, true>(blitTextureHandle, dstX, dstY, width, height, srcX, srcY, srcWidth, srcHeight, rotation, originX, originY, rTint, gTint, bTint, aTint);
 		} else if (disableTransform) {
-			tglBlitGeneric<false, false, true>(blitTextureHandle, dstX, dstY, width, height, srcX, srcY, srcWidth, srcHeight, rotation, rTint, gTint, bTint, aTint);
+			tglBlitGeneric<false, false, true>(blitTextureHandle, dstX, dstY, width, height, srcX, srcY, srcWidth, srcHeight, rotation, originX, originY, rTint, gTint, bTint, aTint);
 		} else {
-			tglBlitGeneric<false, false, false>(blitTextureHandle, dstX, dstY, width, height, srcX, srcY, srcWidth, srcHeight, rotation, rTint, gTint, bTint, aTint);
+			tglBlitGeneric<false, false, false>(blitTextureHandle, dstX, dstY, width, height, srcX, srcY, srcWidth, srcHeight, rotation, originX, originY, rTint, gTint, bTint, aTint);
 		}
 	}
 
-	void tglBlitNoBlend(int blitTextureHandle, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float rotation, float rTint, float gTint, float bTint, float aTint) {
-		tglBlitGeneric<true, false, false>(blitTextureHandle, dstX, dstY, width, height, srcX, srcY, srcWidth, srcHeight, rotation, rTint, gTint, bTint, aTint);
+	void tglBlitNoBlend(int blitTextureHandle, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, float rotation,
+						float originX, float originY, float rTint, float gTint, float bTint, float aTint) {
+		tglBlitGeneric<true, false, false>(blitTextureHandle, dstX, dstY, width, height, srcX, srcY, srcWidth, srcHeight, rotation, originX, originY, rTint, gTint, bTint, aTint);
 	}
 
 	void tglBlitFast(int blitTextureHandle, int x, int y, int width, int height) {
-		tglBlitGeneric<true, true, true>(blitTextureHandle, x, y, width, height, 0, 0, width, height, 0, 255, 255, 255 ,255);
+		tglBlitGeneric<true, true, true>(blitTextureHandle, x, y, width, height, 0, 0, width, height, 0, 0, 0, 255, 255, 255 ,255);
 	}
 
 }
