@@ -21,6 +21,7 @@
  */
 
 #include "engines/myst3/gfx_tinygl_texture.h"
+#include "graphics/tinygl/zblit.h"
 
 namespace Myst3 {
 
@@ -70,22 +71,25 @@ TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface, bool nonPoTSuppor
 	// has no effect on the padded sides (resulting in white lines on the edges)
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_S, TGL_REPEAT);
 	tglTexParameteri(TGL_TEXTURE_2D, TGL_TEXTURE_WRAP_T, TGL_REPEAT);
+	_blitTextureId = tglGenBlitTexture();
 
 	update(surface);
 }
 
 TinyGLTexture::~TinyGLTexture() {
 	tglDeleteTextures(1, &id);
-	buffer.free();
+	tglDeleteBlitTexture(_blitTextureId);
 }
 
 void TinyGLTexture::update(const Graphics::Surface *surface) {
 	tglBindTexture(TGL_TEXTURE_2D, id);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, sourceFormat,const_cast<void *>(surface->getPixels())); // TESTME: Not sure if it works.
 	
-	buffer.free();
-	buffer = Graphics::PixelBuffer(surface->format, surface->w * surface->h, DisposeAfterUse::NO);
-	memcpy(buffer.getRawBuffer(), const_cast<void*>(surface->getPixels()), surface->w * surface->h * surface->format.bytesPerPixel);
+	tglUploadBlitTexture(_blitTextureId, *surface, 0, false);
+}
+
+int TinyGLTexture::getBlitTexture() {
+	return _blitTextureId;
 }
 
 } // End of namespace Myst3
