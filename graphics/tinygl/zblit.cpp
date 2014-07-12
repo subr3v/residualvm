@@ -4,6 +4,8 @@
 #include "common/array.h"
 #include <math.h>
 
+namespace Graphics {
+
 struct BlitImage {
 public:
 	BlitImage() { }
@@ -197,7 +199,6 @@ void tglBlitGenericTransform(BlitImage *blitImage, int dstX, int dstY, int width
 	if (dstY < 0)
 		dstY = 0;
 
-
 	Graphics::PixelBuffer srcBuf(blitImage->_surface.format, (byte *)blitImage->_surface.getPixels());
 	srcBuf.shiftBy(srcX + (srcY * blitImage->_surface.w));
 
@@ -238,25 +239,8 @@ void tglBlitGenericTransform(BlitImage *blitImage, int dstX, int dstY, int width
 			}
 		}
 	} else {
-		
-		uint32 invAngle = 360 - (rotation % 360);
-		float invCos = cos(invAngle * M_PI / 180.0f);
-		float invSin = sin(invAngle * M_PI / 180.0f	);
-
-		int icosx = (int)(invCos * (65536.0f * srcWidth / width));
-		int isinx = (int)(invSin * (65536.0f * srcWidth / width));
-		int icosy = (int)(invCos * (65536.0f * srcHeight / height));
-		int isiny = (int)(invSin * (65536.0f * srcHeight / height));
-
-		int xd = (srcX + originX) << 16;
-		int yd = (srcY + originY) << 16;
-		int ax = -icosx * originX;
-		int ay = -isiny * originY;
-		int sw = width - 1;
-		int sh = height - 1;
-
 		// Transform destination rectangle accordingly.
-		Common::Rect destinationRectangle = rotateRectangle(dstX, dstY, clampWidth, clampHeight, rotation, originX, originY);
+		Common::Rect destinationRectangle = rotateRectangle(dstX, dstY, width, height, rotation, originX, originY);
 
 		if (dstX + destinationRectangle.width() > c->fb->xsize)
 			clampWidth = c->fb->xsize - dstX;
@@ -268,8 +252,27 @@ void tglBlitGenericTransform(BlitImage *blitImage, int dstX, int dstY, int width
 		else
 			clampHeight = destinationRectangle.height();
 
+		uint32 invAngle = 360 - (rotation % 360);
+		float invCos = cos(invAngle * M_PI / 180.0f);
+		float invSin = sin(invAngle * M_PI / 180.0f	);
+
+		int icosx = (int)(invCos * (65536.0f * srcWidth / width));
+		int isinx = (int)(invSin * (65536.0f * srcWidth / width));
+		int icosy = (int)(invCos * (65536.0f * srcHeight / height));
+		int isiny = (int)(invSin * (65536.0f * srcHeight / height));
+
+		int xd = (srcX + originX) << 16;
+		int yd = (srcY + originY) << 16;
+		int cx = originX;
+		int cy = originY;
+
+		int ax = -icosx * cx;
+		int ay = -isiny * cx;
+		int sw = width - 1;
+		int sh = height - 1;
+
 		for (int l = 0; l < clampHeight; l++) {
-			int t = originY - l;
+			int t = cy - l;
 			int sdx = ax + (isinx * t) + xd;
 			int sdy = ay - (icosy * t) + yd;
 			for (int r = 0; r < clampWidth; ++r) {
@@ -370,4 +373,6 @@ void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform) {
 void tglBlitFast(BlitImage *blitImage, int x, int y) {
 	BlitTransform transform(x, y);
 	tglBlitGeneric<true, true, true, false, false>(blitImage, transform);
+}
+
 }

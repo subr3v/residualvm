@@ -209,10 +209,14 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	tglEnable(TGL_TEXTURE_2D);
 	tglDepthMask(TGL_FALSE);
 
-	BlitTransform transform(sLeft, sTop);
+	Graphics::BlitTransform transform(sLeft, sTop);
 	transform.sourceRectangle(textureRect.left, textureRect.top, sWidth, sHeight);
 	transform.tint(transparency);
-	tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);
+	if (sWidth == 16 && sHeight == 16) {
+		transform.rotate(45, 16, 16);
+		transform.scale(32, 32);
+	}
+	Graphics::tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);
 
 	tglDisable(TGL_BLEND);
 	tglDepthMask(TGL_TRUE);
@@ -242,10 +246,10 @@ void TinyGLRenderer::draw2DText(const Common::String &text, const Common::Point 
 		int w = textureRect.width();
 		int h = textureRect.height();
 
-		BlitTransform transform(x, y);
+		Graphics::BlitTransform transform(x, y);
 		transform.sourceRectangle(textureRect.left, textureRect.top, w, h);
 		transform.flip(true, false);
-		tglBlit(glFont->getBlitTexture(), transform);
+		Graphics::tglBlit(glFont->getBlitTexture(), transform);
 
 		x += textureRect.width() - 3;
 	}

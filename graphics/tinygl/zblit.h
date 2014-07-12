@@ -4,6 +4,8 @@
 #include "graphics/surface.h"
 #include "common/rect.h"
 
+namespace Graphics {
+
 struct BlitTransform {
 	BlitTransform(int dstX, int dstY) {
 		_destinationRectangle.translate(dstX,dstY);
@@ -65,5 +67,7 @@ void tglBlitNoBlend(BlitImage *blitImage, const BlitTransform &transform);
 
 // Disables blending, transforms and tinting.
 void tglBlitFast(BlitImage *blitImage, int x, int y);
+
+}
 
 #endif // GRAPHICS_TINYGL_ZBLIT_H_
