@@ -7,13 +7,10 @@
 namespace Graphics {
 
 struct BlitTransform {
-	BlitTransform(int dstX, int dstY) {
+	BlitTransform(int dstX, int dstY) : _rotation(0), _originX(0), _originY(0), _aTint(1.0f),
+				_rTint(1.0f), _gTint(1.0f), _bTint(1.0), _flipHorizontally(false),
+				_flipVertically(false) {
 		_destinationRectangle.translate(dstX,dstY);
-		_sourceRectangle;
-		_aTint = _rTint = _gTint = _bTint = 1.0f;
-		_rotation = 0.0f;
-		_originX = _originY = 0.0f;
-		_flipHorizontally = _flipVertically = false;
 	}
 
 	void sourceRectangle(int srcX, int srcY, int srcWidth, int srcHeight) {
