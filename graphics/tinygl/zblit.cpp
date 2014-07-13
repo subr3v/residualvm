@@ -58,8 +58,7 @@ public:
 		_surface.free();
 	}
 
-	struct Line
-	{
+	struct Line {
 		int _x;
 		int _y;
 		int _length;
