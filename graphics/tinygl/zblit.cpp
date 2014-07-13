@@ -267,8 +267,8 @@ void tglBlitSimple(BlitImage *blitImage, int dstX, int dstY, int srcX, int srcY,
 }
 
 template <bool disableBlending, bool disableColoring, bool flipVertical, bool flipHorizontal>
-void tglBlitScale(BlitImage *blitImage, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight, int rotation,
-					 int originX, int originY, float aTint, float rTint, float gTint, float bTint) {
+void tglBlitScale(BlitImage *blitImage, int dstX, int dstY, int width, int height, int srcX, int srcY, int srcWidth, int srcHeight,
+					 float aTint, float rTint, float gTint, float bTint) {
 	TinyGL::GLContext *c = TinyGL::gl_get_context();
 
 	int clampWidth, clampHeight;
@@ -414,8 +414,7 @@ FORCEINLINE void tglBlitGeneric(BlitImage *blitImage, const BlitTransform &trans
 	} else {
 		if (transform._rotation == 0) {
 			tglBlitScale<disableBlending, disableColoring, flipVertical, flipHorizontal>(blitImage, transform._destinationRectangle.left, transform._destinationRectangle.top,
-				transform._destinationRectangle.width(), transform._destinationRectangle.height(), transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._rotation, 
-				transform._originX, transform._originY, transform._aTint, transform._rTint, transform._gTint, transform._bTint);
+				transform._destinationRectangle.width(), transform._destinationRectangle.height(), transform._sourceRectangle.left, transform._sourceRectangle.top, transform._sourceRectangle.width() , transform._sourceRectangle.height(), transform._aTint, transform._rTint, transform._gTint, transform._bTint);
 		} else 
 		{
 			tglBlitRotoScale<disableBlending, disableColoring, flipVertical, flipHorizontal>(blitImage, transform._destinationRectangle.left, transform._destinationRectangle.top,
