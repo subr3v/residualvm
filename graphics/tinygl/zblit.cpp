@@ -64,31 +64,26 @@ public:
 		Graphics::PixelBuffer _buf; // This is needed for the conversion.
 
 		Line() { }
-		Line(int x, int y, int length, byte *pixels) {
+		Line(int x, int y, int length, byte *pixels) : _buf(TinyGL::gl_get_context()->fb->cmode, length * TinyGL::gl_get_context()->fb->cmode.bytesPerPixel, DisposeAfterUse::NO) {
 			_x = x;
 			_y = y;
 			_length = length;
 			// Performing texture to screen conversion.
 			Graphics::PixelFormat textureFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
-			Graphics::PixelFormat screenFormat = TinyGL::gl_get_context()->fb->cmode;
-			_buf = Graphics::PixelBuffer(screenFormat, length * screenFormat.bytesPerPixel, DisposeAfterUse::NO);
 			Graphics::PixelBuffer srcBuf(textureFormat, pixels);
 			_buf.copyBuffer(0, 0, length, srcBuf);
 			_pixels = _buf.getRawBuffer();
 		}
 
-		Line(const Line& other) {
+		Line(const Line& other) : _buf(TinyGL::gl_get_context()->fb->cmode, other._length * TinyGL::gl_get_context()->fb->cmode.bytesPerPixel, DisposeAfterUse::NO) {
 			_x = other._x;
 			_y = other._y;
 			_length = other._length;
-			Graphics::PixelFormat screenFormat = TinyGL::gl_get_context()->fb->cmode;
-			_buf = Graphics::PixelBuffer(screenFormat, _length * screenFormat.bytesPerPixel, DisposeAfterUse::NO);
 			_buf.copyBuffer(0, 0, _length, other._buf);
 			_pixels = _buf.getRawBuffer();
 		}
 
-		~Line()
-		{
+		~Line() {
 			_buf.free();
 		}
 	};
@@ -201,9 +196,9 @@ void tglBlitGenericNoTransform(BlitImage *blitImage, int dstX, int dstY, int src
 		int lineIndex = 0;
 		int maxY = srcY + clampHeight;
 		int maxX = srcX + clampWidth;
-		while (lineIndex < blitImage->_lines.size() && blitImage->_lines[lineIndex]._y < srcY)
+		while (lineIndex < blitImage->_lines.size() && blitImage->_lines[lineIndex]._y < srcY) {
 			lineIndex++;
-
+		}
 		while (lineIndex < blitImage->_lines.size() && blitImage->_lines[lineIndex]._y < maxY) {
 			const BlitImage::Line &l = blitImage->_lines[lineIndex];
 			if (l._x < maxX && l._x + l._length > srcX) {
