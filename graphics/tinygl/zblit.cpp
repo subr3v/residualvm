@@ -167,8 +167,8 @@ void tglBlitRLE(BlitImage *blitImage, int dstX, int dstY, int srcX, int srcY, in
 
 	Graphics::PixelBuffer dstBuf(c->fb->cmode, c->fb->getPixelBuffer());
 
+	const int kBytesPerPixel = 2;
 	if (disableColoring) {
-		const int kBytesPerPixel = 2;
 		int lineIndex = 0;
 		int maxY = srcY + clampHeight;
 		int maxX = srcX + clampWidth;
@@ -189,7 +189,6 @@ void tglBlitRLE(BlitImage *blitImage, int dstX, int dstY, int srcX, int srcY, in
 			lineIndex++;
 		}
 	} else {
-		const int kBytesPerPixel = 2;
 		int lineIndex = 0;
 		int maxY = srcY + clampHeight;
 		int maxX = srcX + clampWidth;
