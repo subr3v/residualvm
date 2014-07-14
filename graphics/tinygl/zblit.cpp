@@ -6,8 +6,8 @@
 
 namespace Graphics {
 
-	Common::Point transformPoint(float x, float y, int rotation);
-	Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, int originX, int originY);
+Common::Point transformPoint(float x, float y, int rotation);
+Common::Rect rotateRectangle(int x, int y, int width, int height, int rotation, int originX, int originY);
 
 struct BlitImage {
 public:
