@@ -146,7 +146,7 @@ TGLint tgluProject(TGLfloat objx, TGLfloat objy, TGLfloat objz, const TGLfloat m
 }
 
 GfxTinyGL::GfxTinyGL() :
-		_smushWidth(0), _smushHeight(0), _zb(nullptr), _alpha(1.f),
+		_zb(nullptr), _alpha(1.f),
 		_bufferId(0), _currentActor(nullptr) {
 	g_driver = this;
 	_storedDisplay = nullptr;
@@ -1302,9 +1302,6 @@ void GfxTinyGL::destroyTexture(Texture *texture) {
 }
 
 void GfxTinyGL::prepareMovieFrame(Graphics::Surface *frame) {
-	_smushWidth = frame->w;
-	_smushHeight = frame->h;
-
 	_smushImage = Graphics::tglGenBlitImage();
 	Graphics::tglUploadBlitImage(_smushImage, *frame, 0, false);
 }
