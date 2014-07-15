@@ -212,10 +212,6 @@ void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	Graphics::BlitTransform transform(sLeft, sTop);
 	transform.sourceRectangle(textureRect.left, textureRect.top, sWidth, sHeight);
 	transform.tint(transparency);
-	if (sWidth == 16 && sHeight == 16) {
-		transform.rotate(45, 16, 16);
-		transform.scale(32, 32);
-	}
 	Graphics::tglBlit(((TinyGLTexture *)texture)->getBlitTexture(), transform);
 
 	tglDisable(TGL_BLEND);
