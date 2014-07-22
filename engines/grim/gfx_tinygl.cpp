@@ -288,7 +288,7 @@ static void tglShadowProjection(const Math::Vector3d &light, const Math::Vector3
 	tglMultMatrixf(mat);
 }
 
-void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, int *y2) {
+void GfxTinyGL::getScreenBoundingBox(const Mesh *model, int *x1, int *y1, int *x2, int *y2) {
 	if (_currentShadowArray) {
 		*x1 = -1;
 		*y1 = -1;
@@ -359,7 +359,7 @@ void GfxTinyGL::getBoundingBoxPos(const Mesh *model, int *x1, int *y1, int *x2, 
 	*y2 = (int)bottom;
 }
 
-void GfxTinyGL::getBoundingBoxPos(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
+void GfxTinyGL::getScreenBoundingBox(const EMIModel *model, int *x1, int *y1, int *x2, int *y2) {
 	if (_currentShadowArray) {
 		*x1 = -1;
 		*y1 = -1;
