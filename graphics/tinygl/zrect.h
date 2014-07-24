@@ -25,9 +25,12 @@
 
 #include "common/rect.h"
 #include "graphics/tinygl/zblit.h"
+#include "common/array.h"
 
 namespace TinyGL {
 	struct GLContext;
+	struct GLVertex;
+	struct GLTexture;
 }
 
 namespace Graphics {
@@ -53,8 +56,38 @@ private:
 class RasterizationDrawCall : public DrawCall {
 public:
 	RasterizationDrawCall();
+	~RasterizationDrawCall();
 	virtual void execute() const;
 	virtual void execute(const Common::Rect &clippingRectangle) const;
+
+private:
+	int _vertexCount;
+	TinyGL::GLVertex *_vertex;
+	void *_drawTriangleFront, *_drawTriangleBack; 
+
+	struct RasterizationState {
+		int beginType;
+		int currentFrontFace;
+		int cullFaceEnabled;
+		int colorMask;
+		int depthTest;
+		int shadowMode;
+		int texture2DEnabled;
+		int currentShadeModel;
+		int polygonModeBack;
+		int polygonModeFront;
+		bool enableBlending;
+		int sfactor, dfactor;
+		bool alphaTest;
+		int alphaFunc, alphaRefValue;
+		TinyGL::GLTexture *texture;
+		unsigned char *shadowMaskBuf;
+	};
+
+	RasterizationState _state;
+
+	RasterizationState loadState() const;
+	void applyState(const RasterizationState &state) const;
 };
 
 class BlittingDrawCall : public DrawCall {
