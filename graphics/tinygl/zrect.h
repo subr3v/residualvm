@@ -39,6 +39,7 @@ namespace Graphics {
 enum DrawCallType {
 	DrawCall_Rasterization,
 	DrawCall_Blitting,
+	DrawCall_Clear,
 };
 
 class DrawCall {
@@ -51,6 +52,16 @@ public:
 	DrawCallType getType() const { return _type; }
 private:
 	DrawCallType _type;
+};
+
+class ClearBufferDrawCall : public DrawCall {
+public:
+	ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue);
+	virtual void execute() const;
+	virtual void execute(const Common::Rect &clippingRectangle) const;
+private:
+	bool clearZBuffer, clearColorBuffer;
+	int rValue, gValue, bValue, zValue;
 };
 
 class RasterizationDrawCall : public DrawCall {
