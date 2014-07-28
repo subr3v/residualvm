@@ -75,6 +75,8 @@ public:
 	virtual const Common::Rect getDirtyRegion() const;
 
 private:
+	Common::Rect computeDirtyRegion();
+	Common::Rect _dirtyRegion;
 	int _vertexCount;
 	TinyGL::GLVertex *_vertex;
 	void *_drawTriangleFront, *_drawTriangleBack; 
