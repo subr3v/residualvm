@@ -514,9 +514,6 @@ void GrimEngine::updateDisplayScene() {
 				g_driver->releaseMovieFrame();
 		}
 		// Draw Primitives
-		foreach (PrimitiveObject *p, PrimitiveObject::getPool()) {
-			p->draw();
-		}
 		_iris->draw();
 		if (_movieSubtitle) {
 			_movieSubtitle->draw();
