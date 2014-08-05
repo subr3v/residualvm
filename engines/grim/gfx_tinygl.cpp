@@ -568,11 +568,6 @@ void GfxTinyGL::startActorDraw(const Actor *actor) {
 		tglScalef(scale, scale, scale);
 		tglMultMatrixf(quat.toMatrix().getData());
 	}
-
-	if (!_currentShadowArray && actor->getSortOrder() >= 100) {
-		tglColorMask(TGL_FALSE, TGL_FALSE, TGL_FALSE, TGL_FALSE);
-		tglDepthMask(TGL_TRUE);
-	}
 }
 
 void GfxTinyGL::finishActorDraw() {
