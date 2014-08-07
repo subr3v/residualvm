@@ -92,7 +92,7 @@ public:
 
 	void operator delete (void *p) { }
 private:
-	Common::Rect computeDirtyRegion();
+	void computeDirtyRegion();
 	Common::Rect _dirtyRegion;
 	int _vertexCount;
 	TinyGL::GLVertex *_vertex;
