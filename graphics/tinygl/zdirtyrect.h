@@ -43,7 +43,7 @@ namespace Graphics {
 enum DrawCallType {
 	DrawCall_Rasterization,
 	DrawCall_Blitting,
-	DrawCall_Clear,
+	DrawCall_Clear
 };
 
 class DrawCall {
