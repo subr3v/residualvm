@@ -89,6 +89,7 @@ FrameBuffer::FrameBuffer(int width, int height, const Graphics::PixelBuffer &fra
 	this->buffer.zbuf = this->_zbuf;
 	_blendingEnabled = false;
 	_alphaTestEnabled = false;
+	_depthTestEnabled = false;
 	_depthFunc = TGL_LESS;
 }
 

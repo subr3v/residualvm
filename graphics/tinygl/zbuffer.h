@@ -85,6 +85,9 @@ struct FrameBuffer {
 	}
 
 	FORCEINLINE bool compareDepth(unsigned int &zSrc, unsigned int &zDst) {
+		if (!_depthTestEnabled)
+			return true;
+
 		switch (_depthFunc) {
 		case TGL_NEVER:
 			break;
@@ -317,11 +320,15 @@ struct FrameBuffer {
 
 	void setAlphaTestFunc(int func, int ref) {
 		_alphaTestFunc = func;
-		_alphaTestRefVal = ref;
+		_alphaTestRefVal = (int)ref;
 	}
 
 	void setDepthFunc(int func) {
 		_depthFunc = func;
+	}
+
+	void enableDepthTest(bool enable) {
+		_depthTestEnabled = enable;
 	}
 
 	void enableDepthWrite(bool enable) {
@@ -413,6 +420,7 @@ private:
 	int _sourceBlendingFactor;
 	int _destinationBlendingFactor;
 	bool _alphaTestEnabled;
+	bool _depthTestEnabled;
 	int _alphaTestFunc;
 	int _alphaTestRefVal;
 	int _depthFunc;
