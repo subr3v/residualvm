@@ -65,6 +65,7 @@ private:
 class ClearBufferDrawCall : public DrawCall {
 public:
 	ClearBufferDrawCall(bool clearZBuffer, int zValue, bool clearColorBuffer, int rValue, int gValue, int bValue);
+	virtual ~ClearBufferDrawCall() { }
 	bool operator==(const ClearBufferDrawCall &other) const;
 	virtual void execute(bool restoreState) const;
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
@@ -84,7 +85,7 @@ private:
 class RasterizationDrawCall : public DrawCall {
 public:
 	RasterizationDrawCall();
-	~RasterizationDrawCall();
+	virtual ~RasterizationDrawCall() { }
 	bool operator==(const RasterizationDrawCall &other) const;
 	virtual void execute(bool restoreState) const;
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
@@ -145,10 +146,11 @@ public:
 		BlitMode_Regular,
 		BlitMode_NoBlend,
 		BlitMode_Fast,
-		BlitMode_ZBuffer,
+		BlitMode_ZBuffer
 	};
 
 	BlittingDrawCall(BlitImage *image, const BlitTransform &transform, BlittingMode blittingMode);
+	virtual ~BlittingDrawCall() { }
 	bool operator==(const BlittingDrawCall &other) const;
 	virtual void execute(bool restoreState) const;
 	virtual void execute(const Common::Rect &clippingRectangle, bool restoreState) const;
